@@ -1,0 +1,4 @@
+TFTP_USERNAME="tftp"
+TFTP_DIRECTORY="/root/tftp"
+TFTP_ADDRESS=":69"
+TFTP_OPTIONS="--secure --create"

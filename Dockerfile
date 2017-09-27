@@ -12,8 +12,15 @@ iperf iptraf iputils-tracepath \
 links mtr nano nmap rsync \
 socat vim wget
 
+ADD tftpd-hpa /etc/default/tftpd-hpa
+
+RUN mkdir /root/tftp
+
+RUN chmod -R 777 /root/tftp
+
 RUN mkdir /etc/sv/tftpd
 ADD tftpd-run /etc/sv/tftpd/run
 RUN chmod a+x /etc/sv/tftpd/run
 RUN ln -s /etc/sv/tftpd /etc/service
 
+VOLUME /root
