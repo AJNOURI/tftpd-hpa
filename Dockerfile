@@ -1,26 +1,23 @@
-FROM phusion/baseimage:0.9.22
+FROM debian:jessie
 
-# Use baseimage-docker's init system.
-CMD ["/sbin/my_init"]
+RUN apt-get update
+RUN apt-get install -y --no-install-recommends \
+    tftpd-hpa \
+    curl htop iftop \
+    iperf iptraf iputils-tracepath \
+    links mtr nano nmap rsync \
+    socat vim wget net-tools iproute2 iputils-ping git \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Tell debconf to run in non-interactive mode
-ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get update && apt-get install -y tftpd-hpa \
-curl htop iftop \
-iperf iptraf iputils-tracepath \
-links mtr nano nmap rsync \
-socat vim wget
+RUN mkdir /root/data
+RUN chmod 777 /root/data
+RUN mkdir /root/data/null
+RUN chmod 777 /root/data/null
 
-ADD tftpd-hpa /etc/default/tftpd-hpa
+ADD RouterInitTemplate.cfg /root/data/null
 
-RUN mkdir /root/tftp
+VOLUME /root /mnt
 
-RUN chmod -R 777 /root/tftp
-
-RUN mkdir /etc/sv/tftpd
-ADD tftpd-run /etc/sv/tftpd/run
-RUN chmod a+x /etc/sv/tftpd/run
-RUN ln -s /etc/sv/tftpd /etc/service
-
-VOLUME /root
+CMD in.tftpd -L --user tftp -a 0.0.0.0:69 -s -c -B1468 -v /root/data
